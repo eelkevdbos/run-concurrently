@@ -8,6 +8,7 @@ Usage:
 Example:
     python run_concurrently.py "npm run dev" "pytest -q" "uvicorn app:app --reload"
 """
+
 from __future__ import annotations
 
 import argparse
@@ -30,6 +31,7 @@ ANSI_COLORS = [
     "\x1b[36m",  # cyan
 ]
 
+
 def colour(index: int) -> str:
     """Pick a stable colour for a given command index."""
     return ANSI_COLORS[index % len(ANSI_COLORS)]
@@ -42,6 +44,7 @@ def _make_process_group_kwargs() -> dict:
     """
     if os.name == "nt":  # Windows
         import subprocess  # local import to keep std-lib only
+
         return {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
     else:  # POSIX
         return {"preexec_fn": os.setsid}
@@ -77,9 +80,22 @@ async def _run_one(idx: int, cmd: str) -> int:
         **_make_process_group_kwargs(),
     )
 
-    # forward output until the process finishes
-    await _stream_output(idx, cmd, proc)
-    return await proc.wait()
+    try:
+        # forward output until the process finishes
+        await _stream_output(idx, cmd, proc)
+        return await proc.wait()
+    except asyncio.CancelledError:
+        if proc.returncode is None:
+            try:
+                if os.name == "nt":
+                    proc.send_signal(signal.CTRL_BREAK_EVENT)
+                else:
+                    os.killpg(proc.pid, signal.SIGINT)
+                await asyncio.wait_for(proc.wait(), 3)
+            except (asyncio.TimeoutError, ProcessLookupError):
+                proc.kill()  # hard stop
+                await proc.wait()
+        raise
 
 
 async def _main_async(cmds: List[str]) -> int:
@@ -133,7 +149,7 @@ async def _main_async(cmds: List[str]) -> int:
 def _parse_args() -> List[str]:
     parser = argparse.ArgumentParser(
         description="Run multiple shell commands concurrently "
-                    "with coloured, prefixed output."
+        "with coloured, prefixed output."
     )
     parser.add_argument("commands", nargs="+", help="Commands to run (quote each)")
     return parser.parse_args().commands
