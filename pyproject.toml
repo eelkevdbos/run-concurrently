@@ -7,6 +7,13 @@ dependencies = []
 license = "MIT"
 dynamic = ["version"]
 authors = [{ name = "Eelke van den Bos" }]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX"
+]
 
 [project.scripts]
 run-concurrently = "run_concurrently:main"
@@ -18,7 +25,7 @@ run-concurrently = "run_concurrently:main"
 
 [build-system]
 requires = [
-    "setuptools>=64",          # needs the PEP 621/pyproject interface
+    "setuptools>=64", # needs the PEP 621/pyproject interface
     "setuptools-scm[toml]>=8", # derives the version from Git
     "wheel"                    # optional but common
 ]
@@ -32,7 +39,7 @@ py-modules = ["run_concurrently"]
 
 [tool.setuptools_scm]
 version_scheme = "post-release"
-local_scheme   = "no-local-version"
+local_scheme = "no-local-version"
 
 [dependency-groups]
 dev = [
