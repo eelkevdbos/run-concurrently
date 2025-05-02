@@ -1,5 +1,7 @@
 # Run Concurrently
 
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/run-concurrently)
+
 A pure python, zero dependency, package to run a list of commands concurrently.
 
 ## Installation
