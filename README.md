@@ -1,6 +1,8 @@
 # Run Concurrently
 
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/run-concurrently)
+![PyPI - Version](https://img.shields.io/pypi/v/run-concurrently) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/run-concurrently) ![PyPI - License](https://img.shields.io/pypi/l/run-concurrently) ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/eelkevdbos/run-concurrently/test.yml?branch=main&label=tests)
+
+
 
 A pure python, zero dependency, package to run a list of commands concurrently.
 
